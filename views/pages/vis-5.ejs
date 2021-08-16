@@ -1,0 +1,59 @@
+<%- contentFor("body") %>
+
+<span class="title is-size-3 is-block">Visualizaçao 5</span>
+
+Oi, essa é a vis5 <br/>
+
+<div class="select is-info">
+  <select id="selectionador-de-dados">
+    <option>Dados A</option>
+    <option>Dados B</option>
+    <option>Dados C</option>
+    <option>Dados D</option>
+  </select>
+</div>
+
+<button id="aplicar-dados" class="button is-info">Aplicar dados</button>
+
+<canvas id="chart"></canvas>
+
+<script>
+  // Lê os dados do csv de exemplo
+  const csvContent = readCSV("/csv/exemplo_b.csv");
+
+  // Essa função basicamente vai no primeiro dataset do gráfico, substitui os dados
+  // para os novos dados e atualiza o gráfico
+  function atualizarDados(chart, novosDados) {
+    chart.data.datasets[0].data = novosDados;
+    chart.update();
+  }
+
+  const data = {
+    labels: ["Label1", "Label2", "Label3", "Label4"],
+    datasets: [
+      {
+        data: csvContent["a"],
+        backgroundColor: ["#ff6384", "#ff6384", "#ff6384", "#ff6384"],
+        label: "Barrinhas"
+      }
+    ]
+  };
+
+  const chartContext = document.getElementById("chart").getContext("2d");
+  const chart = new Chart(chartContext, { type: "bar", data });
+
+  // Pegando o clique no botão
+  $("#aplicar-dados").click(() => {
+    // Pegando o valor do <select>
+    const valorSelecionado = $("#selectionador-de-dados").find(":selected").text();
+
+    if (valorSelecionado == "Dados A")
+      atualizarDados(chart, csvContent["a"]);
+    else if (valorSelecionado == "Dados B")
+      atualizarDados(chart, csvContent["b"]);
+    else if (valorSelecionado == "Dados C")
+      atualizarDados(chart, csvContent["c"]);
+    else if (valorSelecionado == "Dados D")
+      atualizarDados(chart, csvContent["d"]);
+  });
+</script>

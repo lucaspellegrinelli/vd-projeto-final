@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>Visualização de dados</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/csv-utils.js"></script>
+  </head>
+  <body>
+    <div class="main-content columns is-fullheight m-0">
+      <div class="column is-3 p-0">
+        <%- include("layout/navbar") %>
+      </div>
+      
+      <div class="container column is-9">
+        <div class="section">
+          <%- body %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+<%- contentFor("body") %>
+
+<span class="title is-size-3 is-block">Visualizaçao 3</span>
+
+Oi, essa é a vis3
+
+<canvas id="chart1"></canvas>
+
+Olha só, uma página com 2 gráficos
+
+<canvas id="chart2"></canvas>
+
+<script>
+  const data = {
+    labels: ["Label1", "Label2", "Label3", "Label4"],
+    datasets: [
+      {
+        data: [1, 2, 3, 4],
+        backgroundColor: ["#ff6384", "#36a2eb", "#ff6384", "#36a2eb"],
+        label: "Barrinhas 1"
+      },
+      {
+        data: [4, 3, 2, 1],
+        backgroundColor: ["#36a2eb", "#ff6384", "#36a2eb", "#ff6384"],
+        label: "Barrinhas 2"
+      }
+    ]
+  };
+
+  const chart1Context = document.getElementById("chart1").getContext("2d");
+  const chart1 = new Chart(chart1Context, { type: "bar", data });
+
+  const chart2Options = {
+    indexAxis: "y"
+  };
+  const chart2Context = document.getElementById("chart2").getContext("2d");
+  const chart2 = new Chart(chart2Context, { type: "bar", data, options: chart2Options });
+</script>

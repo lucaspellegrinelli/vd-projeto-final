@@ -1,0 +1,42 @@
+<%- contentFor("body") %>
+
+<span class="title is-size-3 is-block">Visualizaçao 2</span>
+
+Oi, essa é a vis2
+
+<canvas id="chart"></canvas>
+
+<script>
+  function gerarPontosAleatoriosEntre0E1() {
+    const pontos = [];
+    for (let i = 0; i < 100; i++) {
+      pontos.push(Math.random());
+    }
+    return pontos;
+  }
+
+  function gerarEixoXEntre0E1() {
+    return new Array(100).fill(0).map((_, i) => 0.01 * i);
+  }
+
+  const data = {
+    labels: gerarEixoXEntre0E1(),
+    datasets: [
+      {
+        data: gerarPontosAleatoriosEntre0E1(),
+        borderColor: "#ff6384",
+        backgroundColor: "#ff6384",
+        label: "Pontinhos rosa"
+      },
+      {
+        data: gerarPontosAleatoriosEntre0E1(),
+        borderColor: "#36a2eb",
+        backgroundColor: "#36a2eb",
+        label: "Pontinhos azul"
+      }
+    ]
+  };
+
+  const chartContext = document.getElementById("chart").getContext("2d");
+  const chart = new Chart(chartContext, { type: "scatter", data });
+</script>

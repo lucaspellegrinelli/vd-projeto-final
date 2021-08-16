@@ -1,0 +1,45 @@
+<%- contentFor("body") %>
+
+<span class="title is-size-3 is-block">Visualizaçao 4</span>
+
+Oi, essa é a vis4
+
+<canvas id="chart"></canvas>
+
+<script>
+  // Lê os dados do csv de exemplo
+  const csvContent = readCSV("/csv/exemplo_a.csv");
+
+  const data = {
+    labels: [1, 2, 3, 4],
+    datasets: [
+      {
+        data: csvContent["a"],
+        label: "a",
+        borderColor: "#ff6384",
+        backgroundColor: "#ff638499"
+      },
+      {
+        data: csvContent["b"],
+        label: "b",
+        borderColor: "#1abc9c",
+        backgroundColor: "#1abc9c99"
+      },
+      {
+        data: csvContent["c"],
+        label: "c",
+        borderColor: "#9b59b6",
+        backgroundColor: "#9b59b699"
+      },
+      {
+        data: csvContent["d"],
+        label: "d",
+        borderColor: "#3498db",
+        backgroundColor: "#3498db99"
+      },
+    ]
+  };
+
+  const chartContext = document.getElementById("chart").getContext("2d");
+  const chart = new Chart(chartContext, { type: "line", data });
+</script>
