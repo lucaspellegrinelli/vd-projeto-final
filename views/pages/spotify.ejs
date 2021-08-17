@@ -1,0 +1,37 @@
+<%- contentFor("body") %>
+
+<span class="title is-size-3 is-block">Pequenos Múltiplos do Spotify (WIP)</span>
+
+WIP
+
+<div id="chart-container"></div>
+
+<script>
+  const readJsonFile = (path) => {
+    const contents = $.ajax({type: "GET", url: path, async: false}).responseText;
+    return JSON.parse(contents);
+  };
+  const rawData = readJsonFile("/json/kpop-artist-features.json");
+
+  let container = document.getElementById('chart-container');
+
+  rawData.artists.forEach((artist, i) => {
+    let canvas = document.createElement('canvas');
+    canvas.id = 'chart' + i.toString();
+    container.appendChild(canvas);
+
+    const data = {
+      labels: rawData.labels,
+      datasets: [
+        {
+          data: rawData.artists[i].features,
+          backgroundColor: ([PINK, BLUE, PURPLE, GREEN])[i % 4],
+          label: rawData.artists[i].name,
+        }
+      ],
+    };
+    const chart = new Chart(canvas.getContext("2d"), {
+      type: "bar", data, options: { indexAxis: "y" }
+    });
+  })
+</script>
