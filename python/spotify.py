@@ -68,6 +68,7 @@ def build_artist_features_csv(artists, out_file, verbose=False):
             name = sp.artist(artist_id)['name']
             features = list(artist_audio_features(artist_id))
             writer.writerow([artist_id, name] + features)
-            print(f'finished {artist_id} ({name})')
+            if verbose:
+                print(f'finished {artist_id} ({name})')
 
 build_artist_features_csv(kpop_artists, 'kpop-artist-features.csv', verbose=True)
