@@ -37,7 +37,7 @@ general_artists = [
     '246dkjvS1zLTtiykXe5h60', # Post Malone
 ]
 
-# There are the audio features that are numerical and have values between 0.0
+# These are the audio features that are numerical and have values between 0.0
 # and 1.0
 features_of_interest = [
     'acousticness',
