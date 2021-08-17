@@ -1,8 +1,9 @@
-import csv
+import json
 import numpy as np
 import os.path
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
+import sys
 
 # This reads the spotify API client ID and client secret from the
 # SPOTIPY_CLIENT_ID and SPOTIPY_CLIENT_SECRET environment variables
@@ -74,22 +75,34 @@ def artist_audio_features(artist_id):
     mean_features /= len(top_tracks)
     return mean_features
 
-# Builds a CSV file with the mean audio features for a series of artists.
-def build_artist_features_csv(artists, out_file, verbose=False):
+# Builds a JSON file with the mean audio features for a series of artists.
+def build_artist_features_json(artists, out_file, verbose=False):
     # This function takes around 30 secs per artist
+    result = {
+        'labels': features_of_interest,
+        'artists': []
+    }
+    for artist_id in artists:
+        name = sp.artist(artist_id)['name']
+        if verbose:
+            print(f'getting {artist_id} ({name})... ', end='')
+            sys.stdout.flush()
+        features = list(artist_audio_features(artist_id))
+        result['artists'].append({
+            'name': name,
+            'features': features,
+        })
+        if verbose:
+            print('finished')
+
     with open(out_file, 'w') as out_file:
-        writer = csv.writer(out_file)
-        writer.writerow(['id', 'name'] + features_of_interest)
-        for artist_id in artists:
-            name = sp.artist(artist_id)['name']
-            features = list(artist_audio_features(artist_id))
-            writer.writerow([artist_id, name] + features)
-            if verbose:
-                print(f'finished {artist_id} ({name})')
+        json.dump(result, out_file)
 
 # If the file already exists, we don't try to create it again
-if not os.path.isfile('kpop-artist-features.csv'):
-    build_artist_features_csv(kpop_artists, 'kpop-artist-features.csv', verbose=True)
+if not os.path.isfile('kpop-artist-features.json'):
+    build_artist_features_json(kpop_artists,
+        'kpop-artist-features.json', verbose=True)
 
-if not os.path.isfile('general-artist-features.csv'):
-    build_artist_features_csv(general_artists, 'general-artist-features.csv', verbose=True)
+if not os.path.isfile('general-artist-features.json'):
+    build_artist_features_json(general_artists,
+        'general-artist-features.json', verbose=True)
