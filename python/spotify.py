@@ -1,5 +1,6 @@
 import csv
 import numpy as np
+import os.path
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -19,6 +20,21 @@ kpop_artists = [
     '2hRQKC0gqlZGPrmUKbcchR', # SHINee
     '6gzXCdfYfFe5XKhPKkYqxV', # SUPER JUNIOR
     '7n2Ycct7Beij7Dj7meI4X0', # TWICE
+]
+
+# Based on the top 10 artists in
+# https://www.billboard.com/charts/decade-end/top-artists
+general_artists = [
+    '3TVXtAsR1Inumwj472S9r4', # Drake
+    '06HL4z0CvFAxyc27GXpf02', # Taylor Swift
+    '0du5cEVh5yTK9QJze8zA0C', # Bruno Mars
+    '5pKCCKE2ajJHZ9KAiaK11H', # Rihanna
+    '4dpARuHxo51G3z768sgnrY', # Adele
+    '6eUKZXaKkcviH0Ku9w2n3V', # Ed Sheeran
+    '1uNFoZAHBGtllmzznpCI3s', # Justin Bieber
+    '6jJ0s89eD6GaHleKKya26X', # Katy Perry
+    '04gDigrS5kc9YWfZHwBETP', # Maroon 5
+    '246dkjvS1zLTtiykXe5h60', # Post Malone
 ]
 
 # There are the audio features that are numerical and have values between 0.0
@@ -71,4 +87,9 @@ def build_artist_features_csv(artists, out_file, verbose=False):
             if verbose:
                 print(f'finished {artist_id} ({name})')
 
-build_artist_features_csv(kpop_artists, 'kpop-artist-features.csv', verbose=True)
+# If the file already exists, we don't try to create it again
+if not os.path.isfile('kpop-artist-features.csv'):
+    build_artist_features_csv(kpop_artists, 'kpop-artist-features.csv', verbose=True)
+
+if not os.path.isfile('general-artist-features.csv'):
+    build_artist_features_csv(general_artists, 'general-artist-features.csv', verbose=True)
