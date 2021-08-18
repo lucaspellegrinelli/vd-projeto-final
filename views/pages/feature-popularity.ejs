@@ -1,0 +1,109 @@
+<%- contentFor("body") %>
+
+<span class="title is-size-3 is-block">Visualizaçao 5</span>
+
+<div class="select is-info">
+  <select id="selectionador-de-dados">
+    <option>valence</option>
+    <option>acousticness</option>
+    <option>danceability</option>
+    <option>energy</option>
+    <option>liveness</option>
+    <option>speechiness</option>
+  </select>
+</div>
+
+<button id="aplicar-dados" class="button is-info">Escolher feature</button>
+
+<canvas id="chart"></canvas>
+
+<script>
+  const readJsonFile = (path) => {
+    const contents = $.ajax({type: "GET", url: path, async: false}).responseText;
+    return JSON.parse(contents);
+  };
+
+  // Lê os dados do csv de exemplo
+  const songStats = readJsonFile("/json/song-stats.json");
+
+  function atualizarDados(featureName) {
+    chart.data.datasets[0].data = songStats.map(stat => ({ x: stat[featureName], y: stat.views }));
+
+    const meanX = songStats.reduce((a, c) => a + c[featureName], 0) / songStats.length;
+    const meanY = songStats.reduce((a, c) => a + c.views, 0) / songStats.length;
+    
+    let num = 0;
+    let denom = 0;
+    songStats.forEach(stat => {
+      num += (stat[featureName] - meanX) * (stat.views - meanY);
+      denom += Math.pow(stat[featureName] - meanX, 2);
+    });
+
+    const lineM = num / denom;
+    const lineB = meanY - lineM * meanX;
+
+    chart.data.datasets[1].data = [
+      { x: 0, y: lineB },
+      { x: 1, y: lineB + lineM }
+    ];
+
+    chart.update();
+  }
+
+  const options = {
+    scales: {
+      x: {
+        min: 0,
+        max: 1,
+        offset: true,
+        title: {
+          display: true,
+          text: "Valor da featuer"
+        }
+      },
+      y: {
+        min: 0,
+        offset: true,
+        title: {
+          display: true,
+          text: "Views da música em relação a view totais (%)"
+        }
+      },
+    }
+  };
+
+  const config = {
+    data: {
+      datasets: [
+        {
+          type: "scatter",
+          data: [],
+          borderColor: PINK,
+          backgroundColor: PINK,
+          label: "Songs"
+        },
+        {
+          type: "line",
+          data: [],
+          borderColor: BLUE,
+          backgroundColor: BLUE,
+          label: "Correlation line"
+        }
+      ]
+    },
+    options: options    
+  };
+
+
+  const chartContext = document.getElementById("chart").getContext("2d");
+  const chart = new Chart(chartContext, config);
+
+  atualizarDados("valence");
+
+  // Pegando o clique no botão
+  $("#aplicar-dados").click(() => {
+    // Pegando o valor do <select>
+    const valorSelecionado = $("#selectionador-de-dados").find(":selected").text();
+    atualizarDados(valorSelecionado);
+  });
+</script>

@@ -2,8 +2,9 @@
 
 <span class="title is-size-3 is-block">Pequenos Múltiplos do Spotify (WIP)</span>
 
-WIP
+WIP<br>
 
+<button id="change-dataset-button" class="button">Change dataset</button>
 <div id="chart-container"></div>
 
 <script>
@@ -11,128 +12,128 @@ WIP
     const contents = $.ajax({type: "GET", url: path, async: false}).responseText;
     return JSON.parse(contents);
   };
-  const rawData = readJsonFile("/json/kpop-artist-features.json");
 
-  let container = document.getElementById('chart-container');
+  const datasets = [
+    "/json/kpop-artist-features.json",
+    "/json/general-artist-features.json",
+  ];
+  let currentDataset = 0;
+  let selectedArtist = 0;
 
-  // Colocando o gráfico do BTS
-  let canvas = document.createElement('canvas');
-  canvas.height = 110;
-  canvas.className = "mb-6 main-chart";
-  container.appendChild(canvas);
-  const data = {
-    labels: rawData.labels,
-    datasets: [
-      {
-        data: rawData.meanFeatures,
-        backgroundColor: "rgba(0,0,0,0)",
-        borderColor: "black",
-        borderWidth: {
-          right: 3,
-        },
-        barPercentage: 1.0,
-        grouped: false,
-      },
-      {
-        data: rawData.artists[0].features,
-        backgroundColor: PINK,
-        barPercentage: 0.6
-      },
-    ],
-  };
-  const chart = new Chart(canvas.getContext("2d"), {
-      type: "bar",
-      data,
-      options: {
-        indexAxis: "y",
-        plugins: {
-          title: {
-            display: true,
-            text: "BTS",
-            font: {
-              size: 16
-            }
-          },
-          legend: {
-            display: false
-          }
-        }
-      }
-  });
+  const artistColor = (artistIndex) =>
+    artistIndex == 0 ? PINK : currentDataset == 0 ? BLUE : GREEN;
 
-
-  // Colocando os gráficos dos outros artistas
-  const ROW_SIZE = 6;
-  const numberRows = Math.ceil(rawData.artists.length / ROW_SIZE);
-  const allRows = [];
-  for (let i = 0; i < numberRows; i++) {
-    const row = document.createElement("div");
-    row.className = "columns is-flex is-justify-content-center";
-    container.appendChild(row);
-    allRows.push(row);
-  }
-
-  rawData.artists.slice(1).forEach((artist, i) => {
-    const rowIndex = Math.floor(i / ROW_SIZE);
-
-    const canvasHolder = document.createElement("div");
-    canvasHolder.className = "column is-2 p-0 mb-3";
-    let canvas = document.createElement('canvas');
-    canvasHolder.appendChild(canvas);
-    canvas.id = 'chart' + i.toString();
-
-    const data = {
+  const getChartData = (rawData, artistIndex) => {
+    return {
       labels: rawData.labels,
       datasets: [
         {
           data: rawData.meanFeatures,
           backgroundColor: "rgba(0,0,0,0)",
           borderColor: "black",
-          borderWidth: {
-            right: 3,
-          },
+          borderWidth: { right: 3 },
           barPercentage: 1.0,
           grouped: false,
+          label: "average",
         },
         {
-          data: artist.features,
-          backgroundColor: BLUE,
-          barPercentage: 0.6
+          data: rawData.artists[artistIndex].features,
+          backgroundColor: artistColor(artistIndex),
+          barPercentage: 0.6,
+          label: rawData.artists[artistIndex].name,
         },
       ],
+    }
+  };
+
+  const drawMainChart = (rawData, context, artistIndex) => {
+    const data = getChartData(rawData, artistIndex);
+    const options = {
+      indexAxis: "y",
+      scales: {
+        x: { min: 0, max: 1 },
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: rawData.artists[artistIndex].name,
+          font: { size: 16 },
+        },
+        legend: { display: false }
+      }
     };
-    
-    const chart = new Chart(canvas.getContext("2d"), {
-      type: "bar", data, options: {
+    return new Chart(context, { type: "bar", data, options });
+  };
+
+  const drawSmallChart = (rawData, context, artistIndex) => {
+    const data = getChartData(rawData, artistIndex);
+    const options = {
         aspectRatio: 1.25,
         indexAxis: "y",
         scales: {
-          x: {
-            ticks: {
-              display: false
-            }
-          },
-          y: {
-            ticks: {
-              display: false
-            }
-          }
+          x: { min: 0, max: 1, display: false },
+          y: { display: false },
         },
         plugins: {
           title: {
             display: true,
-            text: artist.name,
-            font: {
-              size: 12
-            }
+            padding: 0,
+            text: rawData.artists[artistIndex].name,
+            font: { size: 12 }
           },
-          legend: {
-            display: false
-          }
+          legend: { display: false }
         }
-      }
-    });
+    };
+    return new Chart(context, { type: "bar", data, options });
+  };
 
-    allRows[rowIndex].appendChild(canvasHolder);
-  });
+  const loadCharts = (dataPath) => {
+    const rawData = readJsonFile(dataPath);
+
+    let container = document.getElementById("chart-container");
+    container.innerHTML = "";
+
+    // Adding main chart
+    let canvas = document.createElement("canvas");
+    canvas.height = 110;
+    canvas.className = "mb-6 main-chart";
+    container.appendChild(canvas);
+    const mainChart = drawMainChart(rawData, canvas.getContext("2d"), selectedArtist);
+
+    // Adding small charts
+    const ROW_SIZE = 5;
+    const numberRows = Math.ceil(rawData.artists.length / ROW_SIZE);
+    const allRows = [];
+    for (let i = 0; i < numberRows; i++) {
+      const row = document.createElement("div");
+      row.className = "columns is-flex is-justify-content-center";
+      container.appendChild(row);
+      allRows.push(row);
+    }
+    for (let i = 1; i < rawData.artists.length; i++) {
+      const rowIndex = Math.floor((i - 1) / ROW_SIZE);
+
+      const canvasHolder = document.createElement("div");
+      canvasHolder.className = "column is-2 p-1 mb-3";
+      let canvas = document.createElement("canvas");
+      canvas.setAttribute("style", "border:1px solid gray;");
+      canvas.className = "mt-1 py-1";
+      canvas.onclick = () => {
+        selectedArtist = i == selectedArtist ? 0 : i;
+        loadCharts(datasets[currentDataset]);
+      };
+      canvasHolder.appendChild(canvas);
+
+      drawSmallChart(rawData, canvas.getContext("2d"), i == selectedArtist ? 0 : i);
+
+      allRows[rowIndex].appendChild(canvasHolder);
+    }
+  };
+  loadCharts("/json/kpop-artist-features.json");
+
+  document.getElementById("change-dataset-button").onclick = () => {
+    currentDataset = ([1, 0])[currentDataset];
+    selectedArtist  = 0;
+    loadCharts(datasets[currentDataset]);
+  };
 </script>
