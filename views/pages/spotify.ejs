@@ -24,10 +24,22 @@ WIP
       labels: rawData.labels,
       datasets: [
         {
+          data: rawData.meanFeatures,
+          backgroundColor: "rgba(0,0,0,0)",
+          borderColor: "black",
+          borderWidth: {
+            right: 5,
+          },
+          barPercentage: 1.0,
+          label: "avg",
+          grouped: false,
+        },
+        {
           data: rawData.artists[i].features,
           backgroundColor: ([PINK, BLUE, PURPLE, GREEN])[i % 4],
+          barPercentage: 0.6,
           label: rawData.artists[i].name,
-        }
+        },
       ],
     };
     const chart = new Chart(canvas.getContext("2d"), {

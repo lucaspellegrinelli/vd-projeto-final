@@ -44,7 +44,7 @@ features_of_interest = [
     'acousticness',
     'danceability',
     'energy',
-    'instrumentalness',
+    # 'instrumentalness',
     'liveness',
     'speechiness',
     'valence',
@@ -82,18 +82,22 @@ def build_artist_features_json(artists, out_file, verbose=False):
         'labels': features_of_interest,
         'artists': []
     }
+    mean_features = np.zeros(len(features_of_interest))
     for artist_id in artists:
         name = sp.artist(artist_id)['name']
         if verbose:
             print(f'getting {artist_id} ({name})... ', end='')
             sys.stdout.flush()
-        features = list(artist_audio_features(artist_id))
+        features = artist_audio_features(artist_id)
+        mean_features += features
         result['artists'].append({
             'name': name,
-            'features': features,
+            'features': list(features),
         })
         if verbose:
             print('finished')
+    mean_features /= len(artists)
+    result['meanFeatures'] = list(mean_features)
 
     with open(out_file, 'w') as out_file:
         json.dump(result, out_file)
