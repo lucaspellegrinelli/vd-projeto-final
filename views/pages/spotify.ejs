@@ -13,7 +13,15 @@ WIP<br>
     return JSON.parse(contents);
   };
 
-  const artistColor = (artistIndex) => artistIndex == 0 ? PINK : BLUE;
+  const datasets = [
+    "/json/kpop-artist-features.json",
+    "/json/general-artist-features.json",
+  ];
+  let currentDataset = 0;
+  let selectedArtist = 0;
+
+  const artistColor = (artistIndex) =>
+    artistIndex == 0 ? PINK : currentDataset == 0 ? BLUE : GREEN;
 
   const getChartData = (rawData, artistIndex) => {
     return {
@@ -82,14 +90,14 @@ WIP<br>
     let container = document.getElementById("chart-container");
     container.innerHTML = "";
 
-    // Colocando o gráfico do BTS
+    // Adding main chart
     let canvas = document.createElement("canvas");
     canvas.height = 110;
     canvas.className = "mb-6 main-chart";
     container.appendChild(canvas);
-    const mainChart = drawMainChart(rawData, canvas.getContext("2d"), 0);
+    const mainChart = drawMainChart(rawData, canvas.getContext("2d"), selectedArtist);
 
-    // Colocando os gráficos dos outros artistas
+    // Adding small charts
     const ROW_SIZE = 5;
     const numberRows = Math.ceil(rawData.artists.length / ROW_SIZE);
     const allRows = [];
@@ -107,23 +115,22 @@ WIP<br>
       let canvas = document.createElement("canvas");
       canvas.setAttribute("style", "border:1px solid gray;");
       canvas.className = "mt-1 py-1";
+      canvas.onclick = () => {
+        selectedArtist = i == selectedArtist ? 0 : i;
+        loadCharts(datasets[currentDataset]);
+      };
       canvasHolder.appendChild(canvas);
 
-      drawSmallChart(rawData, canvas.getContext("2d"), i);
+      drawSmallChart(rawData, canvas.getContext("2d"), i == selectedArtist ? 0 : i);
 
       allRows[rowIndex].appendChild(canvasHolder);
     }
   };
   loadCharts("/json/kpop-artist-features.json");
 
-  let currentDataset = 0;
   document.getElementById("change-dataset-button").onclick = () => {
-    const newDataset = ([1, 0])[currentDataset];
-    const datasets = [
-      "/json/kpop-artist-features.json",
-      "/json/general-artist-features.json",
-    ];
-    loadCharts(datasets[newDataset]);
-    currentDataset = newDataset;
+    currentDataset = ([1, 0])[currentDataset];
+    selectedArtist  = 0;
+    loadCharts(datasets[currentDataset]);
   };
 </script>
