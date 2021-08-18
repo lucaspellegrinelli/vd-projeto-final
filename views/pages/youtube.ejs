@@ -1,0 +1,50 @@
+<%- contentFor("body") %>
+
+<span class="title is-size-3 is-block">Trending Youtube (WIP)</span>
+
+WIP
+
+<canvas id="chart"></canvas>
+
+<script>
+    const top_kpop_df = readCSV("/csv/top_kpop_musics.csv");
+    const other_kpop_df = readCSV("/csv/other_kpop_musics.csv");
+
+    function is_bts(idx) {
+        return top_kpop_df['group'][idx] == "BTS";
+    }
+
+    others = {
+        x: other_kpop_df["views"].reduce((a, b) => parseInt(a) + parseInt(b), 0),
+        y: "Outros",
+    }
+
+    var kpop_data = {
+        labels: top_kpop_df['song'],
+        datasets: [{
+            data: top_kpop_df['views'],
+            backgroundColor: function(context) {
+                var index = context.dataIndex;
+
+                return is_bts(index) ? PINK : BLUE;
+            },
+            label: "BTS",
+            barPercentage: 1.0,
+
+        },
+        {
+            data: [others],
+            backgroundColor: '#696969',
+            barPercentage: 1.0,
+            label: "Outros",
+        }],
+    }
+
+    const chart2Options = {
+    indexAxis: "y",
+    grouped: false,
+    };
+
+    const chartContext = document.getElementById("chart").getContext("2d");
+    const chart = new Chart(chartContext, { type: "bar", data: kpop_data, options: chart2Options});
+    </script>
