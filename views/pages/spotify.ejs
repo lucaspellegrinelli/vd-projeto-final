@@ -15,10 +15,71 @@ WIP
 
   let container = document.getElementById('chart-container');
 
-  rawData.artists.forEach((artist, i) => {
+  // Colocando o gráfico do BTS
+  let canvas = document.createElement('canvas');
+  canvas.height = 110;
+  canvas.className = "mb-6 main-chart";
+  container.appendChild(canvas);
+  const data = {
+    labels: rawData.labels,
+    datasets: [
+      {
+        data: rawData.meanFeatures,
+        backgroundColor: "rgba(0,0,0,0)",
+        borderColor: "black",
+        borderWidth: {
+          right: 3,
+        },
+        barPercentage: 1.0,
+        grouped: false,
+      },
+      {
+        data: rawData.artists[0].features,
+        backgroundColor: PINK,
+        barPercentage: 0.6
+      },
+    ],
+  };
+  const chart = new Chart(canvas.getContext("2d"), {
+      type: "bar",
+      data,
+      options: {
+        indexAxis: "y",
+        plugins: {
+          title: {
+            display: true,
+            text: "BTS",
+            font: {
+              size: 16
+            }
+          },
+          legend: {
+            display: false
+          }
+        }
+      }
+  });
+
+
+  // Colocando os gráficos dos outros artistas
+  const ROW_SIZE = 6;
+  const numberRows = Math.ceil(rawData.artists.length / ROW_SIZE);
+  const allRows = [];
+  for (let i = 0; i < numberRows; i++) {
+    const row = document.createElement("div");
+    row.className = "columns is-flex is-justify-content-center";
+    container.appendChild(row);
+    allRows.push(row);
+  }
+
+  rawData.artists.slice(1).forEach((artist, i) => {
+    const rowIndex = Math.floor(i / ROW_SIZE);
+
+    const canvasHolder = document.createElement("div");
+    canvasHolder.className = "column is-2 p-0 mb-3";
     let canvas = document.createElement('canvas');
+    canvasHolder.appendChild(canvas);
     canvas.id = 'chart' + i.toString();
-    container.appendChild(canvas);
 
     const data = {
       labels: rawData.labels,
@@ -28,22 +89,50 @@ WIP
           backgroundColor: "rgba(0,0,0,0)",
           borderColor: "black",
           borderWidth: {
-            right: 5,
+            right: 3,
           },
           barPercentage: 1.0,
-          label: "avg",
           grouped: false,
         },
         {
-          data: rawData.artists[i].features,
-          backgroundColor: ([PINK, BLUE, PURPLE, GREEN])[i % 4],
-          barPercentage: 0.6,
-          label: rawData.artists[i].name,
+          data: artist.features,
+          backgroundColor: BLUE,
+          barPercentage: 0.6
         },
       ],
     };
+    
     const chart = new Chart(canvas.getContext("2d"), {
-      type: "bar", data, options: { indexAxis: "y" }
+      type: "bar", data, options: {
+        aspectRatio: 1.25,
+        indexAxis: "y",
+        scales: {
+          x: {
+            ticks: {
+              display: false
+            }
+          },
+          y: {
+            ticks: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: artist.name,
+            font: {
+              size: 12
+            }
+          },
+          legend: {
+            display: false
+          }
+        }
+      }
     });
-  })
+
+    allRows[rowIndex].appendChild(canvasHolder);
+  });
 </script>
