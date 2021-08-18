@@ -7,8 +7,8 @@ WIP
 <canvas id="chart"></canvas>
 
 <script>
-    const top_kpop_df = readCSV("/csv/top_kpop_musics.csv");
-    const other_kpop_df = readCSV("/csv/other_kpop_musics.csv");
+    const top_kpop_df = readCSV("/csv/top_kpop_songs.csv");
+    const other_kpop_df = readCSV("/csv/other_kpop_songs.csv");
 
     function is_bts(idx) {
         return top_kpop_df['group'][idx] == "BTS";
