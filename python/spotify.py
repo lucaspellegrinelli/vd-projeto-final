@@ -29,6 +29,7 @@ kpop_artists = [
 # Based on the top 10 artists in
 # https://www.billboard.com/charts/decade-end/top-artists
 general_artists = [
+    '3Nrfpe0tUJi4K4DXYWgMUX', # BTS
     '3TVXtAsR1Inumwj472S9r4', # Drake
     '06HL4z0CvFAxyc27GXpf02', # Taylor Swift
     '0du5cEVh5yTK9QJze8zA0C', # Bruno Mars

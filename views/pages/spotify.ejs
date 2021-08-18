@@ -2,8 +2,9 @@
 
 <span class="title is-size-3 is-block">Pequenos Múltiplos do Spotify (WIP)</span>
 
-WIP
+WIP<br>
 
+<button id="change-dataset-button" class="button">Change dataset</button>
 <div id="chart-container"></div>
 
 <script>
@@ -79,6 +80,7 @@ WIP
     const rawData = readJsonFile(dataPath);
 
     let container = document.getElementById("chart-container");
+    container.innerHTML = "";
 
     // Colocando o gráfico do BTS
     let canvas = document.createElement("canvas");
@@ -113,4 +115,15 @@ WIP
     }
   };
   loadCharts("/json/kpop-artist-features.json");
+
+  let currentDataset = 0;
+  document.getElementById("change-dataset-button").onclick = () => {
+    const newDataset = ([1, 0])[currentDataset];
+    const datasets = [
+      "/json/kpop-artist-features.json",
+      "/json/general-artist-features.json",
+    ];
+    loadCharts(datasets[newDataset]);
+    currentDataset = newDataset;
+  };
 </script>
