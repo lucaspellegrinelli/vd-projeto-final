@@ -7,7 +7,7 @@ function readCSV(path) {
   csvCells[0].forEach(name => columnNames[name] = []);
   Object.keys(columnNames).forEach((key, key_i) => {
     for (let i = 1; i < csvLines.length; i++) {
-      columnNames[key].push(parseFloat(csvCells[i][key_i]));
+      columnNames[key].push(csvCells[i][key_i]);
     }
   });
 
