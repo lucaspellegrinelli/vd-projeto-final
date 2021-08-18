@@ -50,6 +50,9 @@ WIP<br>
     const data = getChartData(rawData, artistIndex);
     const options = {
       indexAxis: "y",
+      scales: {
+        x: { min: 0, max: 1 },
+      },
       plugins: {
         title: {
           display: true,
@@ -68,7 +71,7 @@ WIP<br>
         aspectRatio: 1.25,
         indexAxis: "y",
         scales: {
-          x: { display: false },
+          x: { min: 0, max: 1, display: false },
           y: { display: false },
         },
         plugins: {
