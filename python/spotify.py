@@ -7,7 +7,10 @@ import sys
 
 # This reads the spotify API client ID and client secret from the
 # SPOTIPY_CLIENT_ID and SPOTIPY_CLIENT_SECRET environment variables
-sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
+sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(
+    "a5a06f90f9a04b259024dfdeebd837b6",
+    "8143816647f94d36aba4bd1fceb203be"
+))
 
 kpop_artists = [
     '3Nrfpe0tUJi4K4DXYWgMUX', # BTS
