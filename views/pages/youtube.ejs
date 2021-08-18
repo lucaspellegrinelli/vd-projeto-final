@@ -4,25 +4,55 @@
 
 WIP
 
+<br/>
+<div class="select is-info">
+  <select id="selectionador-de-dados">
+    <option>Por música</option>
+    <option>Por grupo</option>
+  </select>
+</div>
+
+<button id="aplicar" class="button is-info">Aplicar</button>
+
 <canvas id="chart"></canvas>
 
 <script>
+    function is_bts(idx) {
+        return top_kpop_df["group"][idx] == "BTS";
+    }
+
     const top_kpop_df = readCSV("/csv/top_kpop_songs.csv");
     const other_kpop_df = readCSV("/csv/other_kpop_songs.csv");
+    const groups_df = readCSV("/csv/top_kpop_groups.csv");
 
-    function is_bts(idx) {
-        return top_kpop_df['group'][idx] == "BTS";
-    }
+    var top_views = top_kpop_df["views"];
+    var other_views = top_kpop_df["views"];
+
+    var top_views_sum = top_views.reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
+    var other_views_sum = other_views.reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
+    var total_sum = top_views_sum + other_views_sum;
+
+    var average = total_sum / (top_views.length + other_views.length);
+
+    var top_kpop_pct = top_kpop_df["views"].map((value) => (100 * value / total_sum))
+    var other_kpop_pct = other_kpop_df["views"].map((value) => (100 * value / total_sum))
+    var average_pct = 100 * average/total_sum
 
     others = {
-        x: other_kpop_df["views"].reduce((a, b) => parseInt(a) + parseInt(b), 0),
+        x: other_kpop_pct.reduce((a, b) => parseInt(a) + parseInt(b), 0),
         y: "Outros",
     }
+
+    function update_datasets(chart, data_arr) {
+        chart.data.datasets = data_arr
+        chart.update()
+    }
+
 
     var kpop_data = {
         labels: top_kpop_df['song'],
         datasets: [{
-            data: top_kpop_df['views'],
+            data: top_kpop_pct,
             backgroundColor: function(context) {
                 var index = context.dataIndex;
 
@@ -32,19 +62,43 @@ WIP
             barPercentage: 1.0,
 
         },
+         {
+            data: [],
+            backgroundColor: BLUE,
+            label: "Demais grupos trending",
+        },
         {
             data: [others],
             backgroundColor: '#696969',
             barPercentage: 1.0,
             label: "Outros",
-        }],
+        },
+        ]
     }
 
     const chart2Options = {
-    indexAxis: "y",
-    grouped: false,
+        indexAxis: "y",
+        grouped: false,
+        plugins: {
+        autocolors: false,
+        annotation: {
+          annotations: {
+            line1: {
+              type: 'line',
+              xMin: average_pct,
+              xMax: average_pct,
+              borderColor: 'rgb(0, 0, 0)',
+              borderWidth: 1,
+              borderDash: [10, 10],
+            }
+          }
+        }
+      }
     };
 
     const chartContext = document.getElementById("chart").getContext("2d");
     const chart = new Chart(chartContext, { type: "bar", data: kpop_data, options: chart2Options});
+
+
+
     </script>
