@@ -42,8 +42,10 @@ Porcentagem de visualizações das músicas de k-pop trending no youtube dos gru
     var other_kpop_pct = other_views.map((value) => (100 * value / total_song_views_sum));
     var groups_pct = groups_views.map((value) => (100 * value / group_sum));
 
-    var average_song_views_pct = 100 * average_song_views / top_views_sum;
-    var average_group_views_pct = 100 * average_group_views / group_sum;
+    var average_song_views_pct = top_kpop_pct.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / top_kpop_pct.length;
+    var average_group_views_pct = groups_pct.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / groups_pct.length;
+
+    var average_pct = (dataset) => dataset.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / top_kpop_pct.length
 
     others = {
         data: [{
@@ -69,6 +71,10 @@ Porcentagem de visualizações das músicas de k-pop trending no youtube dos gru
     function update_labels(chart, labels) {
         chart.data.labels = labels;
         chart.update();
+    }
+
+    function get_average(context, opts) {
+        return average_pct(context.chart.data.datasets[0].data)
     }
 
     var kpop_data = {
@@ -98,8 +104,8 @@ Porcentagem de visualizações das músicas de k-pop trending no youtube dos gru
           annotations: {
             line1: {
               type: 'line',
-              xMin: average_song_views_pct,
-              xMax: average_song_views_pct,
+              xMin: get_average,
+              xMax: get_average,
               borderColor: 'rgb(0, 0, 0)',
               borderWidth: 1,
               borderDash: [10, 10],
