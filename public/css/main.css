@@ -7,3 +7,17 @@ a, a:hover, a:visited, a:active {
   color: inherit;
   text-decoration: none;
 }
+
+button { 
+  background-color: #202326 !important;
+  color: #fff !important;
+}
+
+.select select {
+  border-color: #202326 !important;
+}
+
+.select::after {
+  border-color: #202326 !important;
+
+}
