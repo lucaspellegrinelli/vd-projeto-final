@@ -12,8 +12,8 @@ sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(
     "8143816647f94d36aba4bd1fceb203be"
 ))
 
+bts = '3Nrfpe0tUJi4K4DXYWgMUX' # BTS
 kpop_artists = [
-    '3Nrfpe0tUJi4K4DXYWgMUX', # BTS
     '4Kxlr1PRlDKEB0ekOCyHgX', # BIGBANG
     '41MozSoPIsD1dJM0CLPjZF', # BLACKPINK
     '3cjEqqelV9zb4BYE3qDQ4O', # EXO
@@ -29,7 +29,6 @@ kpop_artists = [
 # Based on the top 10 artists in
 # https://www.billboard.com/charts/decade-end/top-artists
 general_artists = [
-    '3Nrfpe0tUJi4K4DXYWgMUX', # BTS
     '3TVXtAsR1Inumwj472S9r4', # Drake
     '06HL4z0CvFAxyc27GXpf02', # Taylor Swift
     '0du5cEVh5yTK9QJze8zA0C', # Bruno Mars
@@ -65,11 +64,15 @@ def artist_top_tracks(artist_id):
             top_tracks.add(track['id'])
     return list(top_tracks)
 
+artist_audio_features_cache = {}
 # Returns the mean audio features for an artist, in the form of a numpy array.
 # This only returns the features in `features_of_interest`. This is calculated
 # by getting the audio features for every track returned by
 # `artist_top_tracks`, and taking the average.
 def artist_audio_features(artist_id):
+    cached = artist_audio_features_cache.get(artist_id) 
+    if cached is not None:
+        return cached
     top_tracks = artist_top_tracks(artist_id)
     assert len(top_tracks) <= 100
     mean_features = np.zeros(len(features_of_interest))
@@ -77,6 +80,7 @@ def artist_audio_features(artist_id):
         for i, key in enumerate(features_of_interest):
             mean_features[i] += track_features[key]
     mean_features /= len(top_tracks)
+    artist_audio_features_cache[artist_id] = mean_features
     return mean_features
 
 # Builds a JSON file with the mean audio features for a series of artists.
@@ -108,9 +112,14 @@ def build_artist_features_json(artists, out_file, verbose=False):
 
 # If the file already exists, we don't try to create it again
 if not os.path.isfile('kpop-artist-features.json'):
-    build_artist_features_json(kpop_artists,
+    build_artist_features_json([bts] + kpop_artists,
         'kpop-artist-features.json', verbose=True)
 
 if not os.path.isfile('general-artist-features.json'):
-    build_artist_features_json(general_artists,
+    build_artist_features_json([bts] + general_artists,
         'general-artist-features.json', verbose=True)
+
+if not os.path.isfile('all-artist-features.json'):
+    build_artist_features_json([bts] + kpop_artists + general_artists,
+        'all-artist-features.json', verbose=True)
+

@@ -4,7 +4,19 @@
 
 WIP<br>
 
-<button id="change-dataset-button" class="button">Change dataset</button>
+<b>Comparar com:</b><br>
+
+<label class="checkbox">
+  <input id="kpop-artists-checkbox" type="checkbox">
+  Outros artistas de K-pop
+</label>
+<br>
+
+<label class="checkbox">
+  <input id="general-artists-checkbox" type="checkbox">
+  Artistas em geral
+</label>
+
 <div id="chart-container"></div>
 
 <script>
@@ -16,12 +28,15 @@ WIP<br>
   const datasets = [
     "/json/kpop-artist-features.json",
     "/json/general-artist-features.json",
+    "/json/all-artist-features.json",
   ];
   let currentDataset = 0;
   let selectedArtist = 0;
 
   const artistColor = (artistIndex) =>
-    artistIndex == 0 ? PINK : currentDataset == 0 ? BLUE : GREEN;
+    artistIndex == 0 ? PINK
+      : (currentDataset == 1 || artistIndex > 10) ? GREEN
+      : BLUE;
 
   const getChartData = (rawData, artistIndex) => {
     return {
@@ -131,9 +146,28 @@ WIP<br>
   };
   loadCharts("/json/kpop-artist-features.json");
 
-  document.getElementById("change-dataset-button").onclick = () => {
-    currentDataset = ([1, 0])[currentDataset];
-    selectedArtist  = 0;
+  const kpopCheckbox = document.getElementById("kpop-artists-checkbox");
+  const generalCheckbox = document.getElementById("general-artists-checkbox");
+
+  kpopCheckbox.checked = true;
+  generalCheckbox.checked = false;
+
+  const checkboxUpdate = () => {
+    currentDataset = +kpopCheckbox.checked + 2 * (+generalCheckbox.checked) - 1
+    selectedArtist = 0;
     loadCharts(datasets[currentDataset]);
   };
+  kpopCheckbox.onchange = () => {
+    if (!kpopCheckbox.checked && !generalCheckbox.checked) {
+      generalCheckbox.checked = true;
+    }
+    checkboxUpdate();
+  };
+  generalCheckbox.onchange = () => {
+    if (!kpopCheckbox.checked && !generalCheckbox.checked) {
+      kpopCheckbox.checked = true;
+    }
+    checkboxUpdate();
+  };
+
 </script>
