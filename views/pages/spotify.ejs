@@ -1,23 +1,63 @@
 <%- contentFor("body") %>
 
-<span class="title is-size-3 is-block">Pequenos Múltiplos do Spotify (WIP)</span>
+<span class="title is-size-3 is-block">Métricas musicais do Spotify</span>
 
-WIP<br>
+<div class="content">TODO: parágrafo introdutório</div>
 
-<b>Comparar com:</b><br>
+<strong>Comparar com:</strong><br>
 
 <label class="checkbox">
   <input id="kpop-artists-checkbox" type="checkbox">
   Outros artistas de K-pop
 </label>
-<br>
-
+&nbsp;
 <label class="checkbox">
   <input id="general-artists-checkbox" type="checkbox">
   Artistas em geral
 </label>
 
 <div id="chart-container"></div>
+
+<div class="content">
+<ul>
+  <li>
+    <strong>acousticness</strong> é uma métrica que mede o quanto uma música é
+    "acústica". Músicas que fazem uso de violão e outros instrumentos acústicos
+    terão valores mais próximos de 1.
+  </li>
+  <li>
+    <strong>danceability</strong> mede o quanto uma música é "boa para
+    dançar", baseando-se em uma série de métricas. Em geral, uma música com um
+    tempo acelerado, ritmo estável, e uma batida forte e regular, terá valores
+    de <i>danceability</i> mais altos.
+  </li>
+  <li>
+    A métrica <strong>energy</strong> mede a intensidade e atividade de uma
+    música. Músicas energéticas são aceleradas e barulhentas, enquanto músicas
+    mais calmas e lentas têm valores de <i>energy</i> mais próximos de 0.
+  </li>
+  <li>
+    <strong>liveness</strong> estima o quão provável é que uma música seja uma
+    gravação de uma apresentação ao vivo. Valores próximos de 1 indicam que a
+    música foi provavelmente gravada ao vivo, enquanto valores próximos de 0
+    indicam uma gravação em estúdio.
+  </li>
+  <li>
+    A métrica <strong>speechiness</strong> mede o quanto da gravação é composta
+    por apenas palavras. Valores mais altos indicam podcasts, gravações de
+    poesia, ou músicas de rap, enquanto valores moderados e baixos indicam
+    músicas que também possuem partes instrumentais substanciais. Em geral, a
+    maioria dos gêneros musicais apresenta valores mais baixos.
+  </li>
+  <li>
+    Finalmente, <strong>valence</strong> é uma métrica que estima a
+    "positividade" da música. Músicas que são perceptivamente mais "felizes"
+    terão valores mais altos que músicas "tristes" e "negativas".
+  </li>
+</ul>
+
+Referência:
+https://developer.spotify.com/documentation/web-api/reference/#object-audiofeaturesobject
 
 <script>
   const readJsonFile = (path) => {
