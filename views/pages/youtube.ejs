@@ -1,0 +1,157 @@
+<%- contentFor("body") %>
+
+<span class="title is-size-3 is-block">Trending Youtube (WIP)</span>
+
+Porcentagem de visualizações das músicas de k-pop trending no youtube dos grupos mais populares no período 2018-2021
+
+<br/>
+<div class="select is-info">
+  <select id="selectionador-de-dados">
+    <option>Por música</option>
+    <option>Por grupo</option>
+  </select>
+</div>
+
+<button id="aplicar" class="button is-info">Aplicar</button>
+
+<canvas id="chart"></canvas>
+
+<script>
+    function is_bts(idx) {
+        return top_kpop_df["group"][idx] == "BTS";
+    }
+
+    const top_kpop_df = readCSV("/csv/top_kpop_songs.csv");
+    const other_kpop_df = readCSV("/csv/other_kpop_songs.csv");
+    const groups_df = readCSV("/csv/top_kpop_groups.csv");
+
+    var top_views = top_kpop_df["views"];
+    var other_views = other_kpop_df["views"];
+    var groups_views = groups_df["views"];
+
+    var top_views_sum = top_views.reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
+    var other_views_sum = other_views.reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
+    var total_song_views_sum = top_views_sum + other_views_sum;
+
+    var group_sum = groups_views.reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
+
+    var average_song_views = top_views_sum / top_views.length;
+    var average_group_views = group_sum / groups_views.length;
+
+    var top_kpop_pct = top_views.map((value) => (100 * value / total_song_views_sum));
+    var other_kpop_pct = other_views.map((value) => (100 * value / total_song_views_sum));
+    var groups_pct = groups_views.map((value) => (100 * value / group_sum));
+
+    var average_song_views_pct = 100 * average_song_views / top_views_sum;
+    var average_group_views_pct = 100 * average_group_views / group_sum;
+
+    others = {
+        data: [{
+            x: other_kpop_pct.reduce((a, b) => parseFloat(a) + parseFloat(b), 0),
+            y: "Outros",
+        }],
+        backgroundColor: '#696969',
+        barPercentage: 1.0,
+        label: "Outros",
+    };
+
+    dummy = {
+        data: [],
+        backgroundColor: BLUE,
+        label: "Demais grupos trending",
+    }
+
+    function update_datasets(chart, data_arr) {
+        chart.data.datasets = data_arr;
+        chart.update();
+    }
+
+    function update_labels(chart, labels) {
+        chart.data.labels = labels;
+        chart.update();
+    }
+
+    var kpop_data = {
+        labels: top_kpop_df['song'],
+        datasets: [{
+            data: top_kpop_pct,
+            backgroundColor: function(context) {
+                var index = context.dataIndex;
+
+                return is_bts(index) ? PINK : BLUE;
+            },
+            label: "BTS",
+            barPercentage: 1.0,
+
+        },
+        dummy,
+        others,
+        ]
+    }
+
+    const chart2Options = {
+        indexAxis: "y",
+        grouped: false,
+        plugins: {
+        autocolors: false,
+        annotation: {
+          annotations: {
+            line1: {
+              type: 'line',
+              xMin: average_song_views_pct,
+              xMax: average_song_views_pct,
+              borderColor: 'rgb(0, 0, 0)',
+              borderWidth: 1,
+              borderDash: [10, 10],
+            }
+          }
+        }
+      }
+    };
+
+    const chartContext = document.getElementById("chart").getContext("2d");
+    const chart = new Chart(chartContext, { type: "bar", data: kpop_data, options: chart2Options});
+
+
+    $("#aplicar").click(() => {
+    // Pegando o valor do <select>
+        const valorSelecionado = $("#selectionador-de-dados").find(":selected").text();
+
+        if (valorSelecionado == "Por música") {
+            var main_dataset = {
+                data: top_kpop_pct,
+                backgroundColor: function(context) {
+                    var index = context.dataIndex;
+
+                    return is_bts(index) ? PINK : BLUE;
+                },
+                label: "BTS",
+                barPercentage: 1.0,
+            }
+
+            chart.options.plugins.annotation.annotations.line1.xMin = average_song_views_pct;
+            chart.options.plugins.annotation.annotations.line1.xMax = average_song_views_pct;
+            update_datasets(chart, [main_dataset, dummy, others])
+            update_labels(chart, top_kpop_df["song"]);
+        }
+        else if (valorSelecionado == "Por grupo") {
+            var main_dataset = {
+                data: groups_pct,
+                backgroundColor: function(context) {
+                    var index = context.dataIndex;
+
+                    return groups_df["group"][index] == "BTS" ? PINK : BLUE;
+                },
+                label: "BTS",
+                barPercentage: 1.0,
+            }
+
+            chart.options.plugins.annotation.annotations.line1.xMin = average_group_views_pct;
+            chart.options.plugins.annotation.annotations.line1.xMax = average_group_views_pct;
+            update_datasets(chart, [main_dataset, dummy])
+            update_labels(chart, groups_df["group"])
+        }
+    });
+
+
+    </script>
