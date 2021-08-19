@@ -2,6 +2,14 @@
 
 <span class="title is-size-3 is-block">Visualizaçao 5</span>
 
+<br/><br/>
+
+A visualização abaixo propõe uma comparação entre dois conjuntos de dados usados em outras visualizações: vídeos em 
+alta no YouTube e métricas disponibilizadas pelo Spofity. Com isso, é possível entender se existe correlação entre as características 
+de cada música e a sua popularidade.
+
+<br/><br/>
+
 <div class="select is-info">
   <select id="selectionador-de-dados">
     <option>valence</option>
@@ -60,7 +68,7 @@
         offset: true,
         title: {
           display: true,
-          text: "Valor da featuer"
+          text: "Valor da métrica"
         }
       },
       y: {
@@ -82,14 +90,14 @@
           data: [],
           borderColor: PINK,
           backgroundColor: PINK,
-          label: "Songs"
+          label: "Música"
         },
         {
           type: "line",
           data: [],
           borderColor: BLUE,
           backgroundColor: BLUE,
-          label: "Correlation line"
+          label: "Linha de correlação"
         }
       ]
     },
