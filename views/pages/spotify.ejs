@@ -2,7 +2,24 @@
 
 <span class="title is-size-3 is-block">Métricas musicais do Spotify</span>
 
-<div class="content">TODO: parágrafo introdutório</div>
+<div class="content">
+  <p>
+    O aplicativo de músicas Spotify oferece uma API com inúmeras informações
+    sobre as músicas presentes na plataforma. Entre elas, a API apresenta
+    métricas (ou features) para cada música, que são valores computados por um
+    algoritmo de aprendizado de máquina que tentam quantificar certas
+    características das músicas. Por exemplo, existem métricas que medem o quão
+    "alegre" ou "energética" é uma música.
+  </p>
+  <p>
+    Para melhor entender o que diferencia o BTS de outros grupos de K-pop e de
+    outros artistas em geral, agregamos os valores de seis dessas métricas para
+    as músicas mais ouvidas desses artistas. As músicas selecionadas foram
+    todas as músicas que atingiram o rank de 10 mais ouvidas do artista em pelo
+    menos uma região, e foi tomada a média de cada métrica.
+  </p>
+  <p>Você pode clicar em um dos gráficos menores para vê-lo com mais detalhe.</p>
+</div>
 
 <strong>Comparar com:</strong><br>
 
@@ -89,7 +106,7 @@ https://developer.spotify.com/documentation/web-api/reference/#object-audiofeatu
           borderWidth: { right: 3 },
           barPercentage: 1.0,
           grouped: false,
-          label: "average",
+          label: "Média",
         },
         {
           data: rawData.artists[artistIndex].features,
