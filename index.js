@@ -2,7 +2,7 @@ const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const app = express();
 
-const PORT = 80;
+const PORT = process.env.PORT || 80;
 
 app.use(expressLayouts);
 app.set("view engine", "ejs");
