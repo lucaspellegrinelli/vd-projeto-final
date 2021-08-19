@@ -1,10 +1,13 @@
 <%- contentFor("body") %>
 
-<span class="title is-size-3 is-block">Trending Youtube (WIP)</span>
+<span class="title is-size-3 is-block">Vídeos em alta no YouTube</span>
 
-Porcentagem de visualizações das músicas de k-pop trending no youtube dos grupos mais populares no período 2018-2021
+O gráfico de barras abaixo apresenta de forma relativa a quantidade de visualizões do BTS e de outros grupos de K-pop 
+de acordo com os vídeos que estavam "em alta" no YouTube, isto é, vídeos que foram considerados relevantes pela plataforma
+ em determinado momento, levando em conta métricas como quantidade de visualizações, data de envio, entre outros.
 
-<br/>
+<br/><br/>
+
 <div class="select is-info">
   <select id="selectionador-de-dados">
     <option>Por música</option>
@@ -13,6 +16,8 @@ Porcentagem de visualizações das músicas de k-pop trending no youtube dos gru
 </div>
 
 <button id="aplicar" class="button is-info">Aplicar</button>
+
+<br/><br/>
 
 <canvas id="chart"></canvas>
 
@@ -98,6 +103,14 @@ Porcentagem de visualizações das músicas de k-pop trending no youtube dos gru
     const chart2Options = {
         indexAxis: "y",
         grouped: false,
+        scales: {			
+					x: {
+						title: {
+							text: "Porcentagem de visualizações",
+							display: true
+						}
+					}	
+				},
         plugins: {
         autocolors: false,
         annotation: {
