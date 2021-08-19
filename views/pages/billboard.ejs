@@ -1,0 +1,99 @@
+<%- contentFor("body") %>
+
+<span class="title is-size-3 is-block">Progressão de músicas na Billboard</span>
+
+O gráfico de linhas abaixo representa a progressão de uma dada música do BTS desde a primeira semana em que ela entrou em pelo menos um dos três charts avaliados até a décima semana consecutiva.
+
+<br/><br/>
+
+<div class="select">
+	<select id="selectionador-de-dados">
+		<option>Permission To Dance</option>
+		<option>Butter</option>
+		<option>Film Out</option>
+		<option>Dynamite</option>
+		<option>Life Goes On</option>
+		<option>Blue & Grey</option>
+		<option>Stay</option>
+		<option>Fly To My Room</option>
+		<option>Telepathy</option>
+		<option>Dis-ease</option>
+		<option>ON</option>
+		<option>Black Swan</option>
+		<option>Fake Love</option>
+		<option>DNA</option>
+	</select>
+</div>
+
+<button id="aplicar-dados" class="button">Aplicar dados</button>
+
+<br/><br/>
+
+<canvas id="chart"></canvas>
+
+<script>
+  // Lê os dados do csv de exemplo
+  const hot100 = readCSV("/csv/hot100.csv");
+  const kr100 = readCSV("/csv/hot100kr.csv");
+  const top200 = readCSV("/csv/top200.csv");
+
+	function generateDatset(song){
+		return [
+      {
+        data: hot100[song].map((d, i) => ({x: i + 1, y:d})).filter(d => d.y <= 100 && d.y), 
+        label: "Hot 100",
+        borderColor: PINK,
+        backgroundColor: PINK
+      },
+			{
+        data: kr100[song].map((d, i) => ({x: i + 1, y:d})).filter(d => d.y <= 100 && d.y), 
+        label: "Hot 100 Korea",
+        borderColor: BLUE,
+        backgroundColor: BLUE
+      },
+			{
+        data: top200[song].map((d, i) => ({x: i + 1, y:d})).filter(d => d.y <= 100 && d.y), 
+        label: "Top 200 Global",
+        borderColor: PURPLE,
+        backgroundColor: PURPLE
+      }
+      
+    ]
+	}
+
+  const data = {
+    labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    datasets: generateDatset("Permission To Dance")
+  };
+
+  const chartContext = document.getElementById("chart").getContext("2d");
+  const chart = new Chart(chartContext, { type: "line", data, options:{
+		scales: {
+			y: {
+				min: 1, 
+				max: 100,
+				reverse: true,
+				offset: true,
+				title: {
+					text: "Posição",
+					display: true
+				}
+			},
+			x: {
+				title: {
+					text: "Semana",
+					display: true
+				}
+			}
+		}
+	} });
+
+	$("#aplicar-dados").click(() => {
+    // Pegando o valor do <select>
+    const valorSelecionado = $("#selectionador-de-dados").find(":selected").text();
+		chart.data.datasets = generateDatset(valorSelecionado)
+		chart.update()
+
+  });
+
+</script>
